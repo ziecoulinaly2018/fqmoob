@@ -1,2 +1,0 @@
-# fqmoob
-site link
