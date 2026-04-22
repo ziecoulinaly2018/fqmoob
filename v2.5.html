@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fqmoob</title>
+  <link href="https://api.fontshare.com/v2/css?f=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-6: 1.5rem; --space-8: 2rem;
+      --radius-xl: 1rem; --radius-full: 9999px; --transition: 250ms cubic-bezier(0.34, 0.16, 0.5, 1.33);
+      --font-body: 'Satoshi', Inter, sans-serif;
+      --glass-bg: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      /* FOND ULTRA-SOMBRE */
+      --bg-dark: #0a080a;
+      --bg-gradient: #1a0f1a;
+      --orb-purple: rgba(85, 40, 120, 0.85);
+      --shadow-neon: 0 25px 80px rgba(120, 60, 200, 0.6);
+    }
+
+    *,::before,::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      min-height: 100dvh; font-family: var(--font-body); font-size: var(--text-base); color: #f8f8f8;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: var(--space-8) var(--space-4); position: relative; overflow-x: hidden;
+      background: linear-gradient(145deg, var(--bg-dark) 0%, var(--bg-gradient) 60%, #0d0a0a 100%);
+    }
+
+    /* Orbes deep purple sombre */
+    .bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+    .bg::before {
+      content: ''; position: absolute; width: 70vw; height: 70vw; max-width: 600px; max-height: 600px;
+      border-radius: 50%; background: radial-gradient(circle, var(--orb-purple) 0%, rgba(60, 30, 100, 0.4) 60%, transparent 80%);
+      top: -15%; left: -10%; filter: blur(70px);
+      animation: drift1 28s linear infinite alternate; will-change: transform;
+    }
+    .bg::after {
+      content: ''; position: absolute; width: 60vw; height: 60vw; max-width: 500px; max-height: 500px;
+      border-radius: 50%; background: radial-gradient(circle, rgba(100, 60, 160, 0.7) 0%, rgba(40, 20, 80, 0.3) 60%, transparent 80%);
+      bottom: -10%; right: -10%; filter: blur(75px);
+      animation: drift2 32s linear infinite alternate-reverse; will-change: transform;
+    }
+    .bg-extra {
+      position: absolute; width: 45vw; height: 45vw; max-width: 380px; max-height: 380px;
+      border-radius: 50%; background: radial-gradient(circle, rgba(120, 70, 180, 0.5) 0%, rgba(50, 30, 90, 0.2) 60%, transparent 80%);
+      top: 45%; left: 50%; transform: translate(-50%, -50%); filter: blur(80px);
+      animation: drift3 35s linear infinite alternate; will-change: transform;
+    }
+    .bg-grain {
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+      opacity: 0.25; pointer-events: none;
+    }
+
+    @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(12px,18px) scale(1.15); } }
+    @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-12px,-10px) scale(1.2); } }
+    @keyframes drift3 { from { transform: translate(-50%,-50%) scale(1); } to { transform: translate(-40%,-60%) scale(1.3); } }
+
+    /* Reste identique à la version précédente (container, avatar, boutons...) */
+    .container {
+      width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center;
+      gap: var(--space-6); position: relative; z-index: 1; opacity: 0; transform: translateY(40px);
+      animation: slideInUp 900ms 300ms cubic-bezier(0.25,0.46,0.45,0.94) forwards; will-change: transform, opacity;
+    }
+    @keyframes slideInUp { to { opacity: 1; transform: translateY(0); } }
+
+    .theme-toggle {
+      position: fixed; top: var(--space-4); right: var(--space-4); width: 48px; height: 48px;
+      border-radius: var(--radius-full); background: rgba(120,60,200,0.3); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1); color: #f8f8f8; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; transition: all var(--transition); z-index: 10; will-change: transform;
+    }
+    .theme-toggle:hover { background: rgba(120,60,200,0.5); transform: scale(1.15) rotate(180deg); }
+
+    .avatar {
+      width: 96px; height: 96px; border-radius: var(--radius-full);
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      display: flex; align-items: center; justify-content: center; font-size: 2.25rem;
+      font-weight: 800; color: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,0.15), var(--shadow-neon);
+      animation: floatSubtle 4.5s ease-in-out infinite; will-change: transform;
+    }
+    @keyframes floatSubtle {
+      0%,100% { transform: translateY(0) rotate(0deg); } 33% { transform: translateY(-4px) rotate(0.5deg); }
+      66% { transform: translateY(-2px) rotate(-0.5deg); }
+    }
+
+    /* Boutons glass purple glow */
+    .profile-info { text-align: center; display: flex; flex-direction: column; gap: var(--space-3); }
+    .profile-name { font-size: var(--text-xl); font-weight: 800; line-height: 1.1; color: #fff; }
+    .profile-bio { font-size: var(--text-sm); color: rgba(255,255,255,0.75); max-width: 38ch; line-height: 1.6; }
+
+    .insta-row { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    .links { width: 100%; display: flex; flex-direction: column; gap: var(--space-3); }
+
+    .link-btn {
+      display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-6);
+      border-radius: var(--radius-xl); background: var(--glass-bg); backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border); color: #f8f8f8; text-decoration: none; font-weight: 600;
+      font-size: var(--text-base); box-shadow: 0 12px 40px rgba(0,0,0,0.6); transition: all var(--transition);
+      cursor: pointer; will-change: transform;
+    }
+    .link-btn:hover {
+      transform: translateY(-6px) scale(1.03); background: rgba(255,255,255,0.1);
+      box-shadow: var(--shadow-neon), 0 0 0 1px rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.3);
+    }
+    .link-btn:active { transform: translateY(-3px) scale(1.01); }
+    .link-btn.insta-card { flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4) var(--space-3); text-align: center; }
+    .link-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .link-icon img { width: 26px; height: 26px; }
+    .link-btn.youtube .link-icon { background: #ff0000; }
+    .link-btn.instagram .link-icon, .link-btn.insta-card .link-icon { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .link-label { flex: 1; font-weight: 700; color: #fff; }
+    .insta-card .link-label { flex: unset; font-size: var(--text-sm); font-weight: 700; color: #fff; }
+    .insta-card .link-handle { font-size: var(--text-sm); color: rgba(255,255,255,0.7); }
+    .link-arrow { color: rgba(255,255,255,0.6); transition: all var(--transition); }
+    .link-btn:hover .link-arrow { transform: translateX(6px); color: #fff; }
+
+    .footer { font-size: var(--text-sm); color: rgba(255,255,255,0.35); text-align: center; margin-top: var(--space-6); }
+
+    @media (prefers-reduced-motion: reduce) { *, .bg::before, .bg::after, .avatar, .container, .link-btn { animation: none !important; transition: none !important; } .link-btn:hover { transform: none; } }
+    @media (max-width: 480px) { body { padding: var(--space-6) var(--space-3); } .avatar { width: 84px; height: 84px; font-size: 2rem; } }
+  </style>
+</head>
+<body>
+  <div class="bg"><div class="bg-extra"></div><div class="bg-grain"></div></div>
+  <button class="theme-toggle" data-theme-toggle aria-label="Thème">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v-2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h-2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+  </button>
+  <div class="container">
+    <div class="avatar">FQ</div>
+    <div class="profile-info">
+      <h1 class="profile-name">fqmoob</h1>
+      <p class="profile-bio">Créateur de contenu. Retrouve-moi sur mes réseaux 👇</p>
+    </div>
+    <div class="insta-row">
+      <a class="link-btn instagram insta-card" href="https://www.instagram.com/fq.moob/" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon"><img src="https://cdn.simpleicons.org/instagram/white" alt="Instagram"></div><span class="link-label">Instagram</span><span class="link-handle">@fq.moob</span>
+      </a>
+      <a class="link-btn instagram insta-card" href="https://www.instagram.com/fq.world/" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon"><img src="https://cdn.simpleicons.org/instagram/white" alt="Instagram"></div><span class="link-label">Instagram</span><span class="link-handle">@fq.world</span>
+      </a>
+    </div>
+    <div class="links">
+      <a class="link-btn youtube" href="https://www.youtube.com/@FQMob" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon"><img src="https://cdn.simpleicons.org/youtube/white" alt="YouTube"></div><span class="link-label">YouTube</span><span class="link-arrow">→</span>
+      </a>
+    </div>
+    <p class="footer">© fqmoob 2026</p>
+  </div>
+  <script>
+    const toggle=document.querySelector('[data-theme-toggle]'),root=document.documentElement;let isDark=true;
+    toggle.addEventListener('click',()=>{isDark=!isDark;root.setAttribute('data-theme',isDark?'dark':'light');});
+  </script>
+</body>
+</html>
